@@ -3,3 +3,20 @@
 ################################################################################
 
 *.ipch
+*.exe
+*.ilk
+*.pdb
+*.tlog
+*.db-wal
+*.obj
+*.idb
+*.suo
+*.enc
+*.vcxproj
+*.filters
+*.user
+*.opendb
+*.db
+*.log
+*.sln
+*.db-shm
