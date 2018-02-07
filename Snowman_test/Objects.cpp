@@ -1,9 +1,6 @@
 #include "Objects.h"
 #include "GeometryGenerator.h"
 #include "Vertex.h"
-#include "d3dApp.h"
-#include "d3dx11Effect.h"
-#include "MathHelper.h"
 
 SubObject::SubObject() 
 	:mTexMapSRV(nullptr), vertexOffset(0), indexOffset(0), indexCount(0),
@@ -37,13 +34,10 @@ void SubObject::setBufferOffsetAndCount(UINT vOffset, UINT iOffset, UINT iCount)
 	indexCount = iCount;
 }
 
-void SubObject::setScaleAndOffset(CXMMATRIX mInputScale, float x, float y, float z)
+void SubObject::setScaleAndOffset(CXMMATRIX mInputScale, CXMMATRIX mInputOffset)
 {
 	mScale = mInputScale;
-	posxW = x;
-	posyW = y;
-	poszW = z;
-	mOffset = XMMatrixTranslation(posxW, posyW, poszW);
+	mOffset = mInputOffset;
 }
 
 void SubObject::setMovingState(float radius,float speed)
@@ -51,37 +45,4 @@ void SubObject::setMovingState(float radius,float speed)
 	isMoving = true;
 	moveRadius = radius;
 	moveSpeed = speed;
-}
-
-inline float arctan(float x, float z)
-{
-	if (x > 0) {
-		return atan(z / x);
-	}
-	else if (x < 0) {
-		return atan(z / x) + MathHelper::Pi;
-	}
-	else {	//x==0
-		if (z >= 0)
-			return MathHelper::Pi / 2;
-		else
-			return MathHelper::Pi / 2 * 3;
-	}
-}
-
-void SubObject::mOffsetUpdate(float dt)
-{
-	if (isMoving) {
-
-		float theta = arctan(posxW , poszW);
-		theta += dt * moveSpeed;
-		if (theta > 2 * MathHelper::Pi)
-		{
-			theta -= 2 * MathHelper::Pi;
-		}
-		posxW = moveRadius * cos(theta);
-		poszW = moveRadius * sin(theta);
-
-		mOffset = XMMatrixTranslation(posxW, posyW,poszW);
-	}
 }

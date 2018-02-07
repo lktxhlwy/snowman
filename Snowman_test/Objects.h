@@ -44,7 +44,7 @@ namespace ObjsData
 
 	const float boxLength = 8.0f;
 
-	const float moveRadius = 30.0f;
+	const float moveRadius = 20.0f;
 	const float moveSpeed = 0.5f;
 
 	const Material mGridMat(
@@ -70,17 +70,12 @@ public:
 	void setMaterial(Material mMat);
 	void setTexture(ID3D11ShaderResourceView* mInputTexMapSRV, CXMMATRIX mInputTexTransform);
 	void setBufferOffsetAndCount(UINT vOffset, UINT iOffset, UINT iCount);
-	void setScaleAndOffset(CXMMATRIX mInputScale, float posxW, float posyW, float poszW);
+	void setScaleAndOffset(CXMMATRIX mInputScale, CXMMATRIX mInputOffset);
 	void setMovingState(float radius, float speed);
-	void mOffsetUpdate(float dt);
 
 	ID3D11ShaderResourceView* mTexMapSRV;
 	XMMATRIX mTexTransform;
 	Material mMat;
-
-	float posxW;
-	float posyW;
-	float poszW;
 
 	XMMATRIX mScale;
 	XMMATRIX mOffset;

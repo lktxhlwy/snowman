@@ -12,7 +12,6 @@
 //#include<Windows.h>
 
 #include "Snowman.h"
-#include <math.h>
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 	PSTR cmdLine, int showCmd)
@@ -32,19 +31,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance,
 
 SnowmanApp::SnowmanApp(HINSTANCE hInstance)
 	: D3DApp(hInstance), mVB(0), mIB(0), mGrassMapSRV(0),
-	mEyePosW(0.0f, 0.0f, 0.0f), mLandIndexCount(0), mTheta(1.3f*MathHelper::Pi), mPhi(0.4f*MathHelper::Pi), mRadius(40.0f)
+	mEyePosW(0.0f, 0.0f, 0.0f), mLandIndexCount(0), mTheta(1.3f*MathHelper::Pi), mPhi(0.4f*MathHelper::Pi), mRadius(2.5f)
 {
-	mMainWndCaption = L"Snowman";
+	mMainWndCaption = L"Snowman_test";
 
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
-
-	/*XMMATRIX mSnowmanScale = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	snowmanMoveRadius = 30.0f;
-	snowmanTheta = 0.0f;
-	XMMATRIX mSnowmanOffset = XMMatrixTranslation(snowmanMoveRadius*cos(snowmanTheta), 8.0f, snowmanMoveRadius*sin(snowmanTheta));
-	XMStoreFloat4x4(&mSnowmanWorld, XMMatrixMultiply(mSnowmanScale, mSnowmanOffset));*/
-
 
 	mDirLights[0].Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	mDirLights[0].Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -61,7 +53,7 @@ SnowmanApp::SnowmanApp(HINSTANCE hInstance)
 	mDirLights[2].Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	mDirLights[2].Direction = XMFLOAT3(0.0f, -0.707f, -0.707f);
 
-	subObjsCount = 6;
+	subObjsCount = 1;
 	std::vector<SubObject> subs(subObjsCount);
 	subObjs = subs;
 
@@ -103,7 +95,7 @@ bool SnowmanApp::Init()
 		L"Textures/snowman_body.dds", &texResource, &mSnowmanBodyMapSRV));
 
 	HR(DirectX::CreateDDSTextureFromFile(md3dDevice,
-		L"Textures/snowman_head.dds", &texResource, &mSnowmanHeadMapSRV));
+		L"Textures/snowman_body.dds", &texResource, &mSnowmanHeadMapSRV));
 
 	//HR(DirectX::CreateDDSTextureFromFile(md3dDevice,
 	//	L"Textures/snowman_arm.dds", &texResource, &mSnowmanArmMapSRV));
@@ -144,77 +136,7 @@ void SnowmanApp::UpdateScene(float dt)
 
 	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
 	XMStoreFloat4x4(&mView, V);
-
-	//
-	// Every quarter second, generate a random wave.
-	//
-	//static float t_base = 0.0f;
-	//if( (mTimer.TotalTime() - t_base) >= 0.25f )
-	//{
-	//	t_base += 0.25f;
- //
-	//	DWORD i = 5 + rand() % (mWaves.RowCount()-10);
-	//	DWORD j = 5 + rand() % (mWaves.ColumnCount()-10);
-
-	//	float r = MathHelper::RandF(1.0f, 2.0f);
-
-	//	mWaves.Disturb(i, j, r);
-	//}
-
-	//mWaves.Update(dt);
-
-	//
-	// Update the wave vertex buffer with the new solution.
-	//
-
-	//D3D11_MAPPED_SUBRESOURCE mappedData;
-	//HR(md3dImmediateContext->Map(mWavesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
-
-	//Vertex::Basic32* v = reinterpret_cast<Vertex::Basic32*>(mappedData.pData);
-	//for(UINT i = 0; i < mWaves.VertexCount(); ++i)
-	//{
-	//	v[i].Pos    = mWaves[i];
-	//	v[i].Normal = mWaves.Normal(i);
-
-	//	// Derive tex-coords in [0,1] from position.
-	//	v[i].Tex.x  = 0.5f + mWaves[i].x / mWaves.Width();
-	//	v[i].Tex.y  = 0.5f - mWaves[i].z / mWaves.Depth();
-	//}
-
-	//md3dImmediateContext->Unmap(mWavesVB, 0);
-
-	//
-	// Animate water texture coordinates.
-	//
-
-	//// Tile water texture.
-	//XMMATRIX wavesScale = XMMatrixScaling(5.0f, 5.0f, 0.0f);
-
-	//// Translate texture over time.
-	//mWaterTexOffset.y += 0.05f*dt;
-	//mWaterTexOffset.x += 0.1f*dt;	
-	//XMMATRIX wavesOffset = XMMatrixTranslation(mWaterTexOffset.x, mWaterTexOffset.y, 0.0f);
-
-	//// Combine scale and translation.
-	//XMStoreFloat4x4(&mWaterTexTransform, wavesScale*wavesOffset);
-
-	//Update the world matrix of snowman
-	//XMMATRIX mSnowmanScale = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	//snowmanMoveRadius = 30.0f;
-	//snowmanTheta += 2.0f*dt;
-	//if (snowmanTheta > 2 * MathHelper::Pi)
-	//{
-	//	snowmanTheta -= 2 * MathHelper::Pi;
-	//}
-	//XMMATRIX mSnowmanOffset = XMMatrixTranslation(snowmanMoveRadius*cos(snowmanTheta), 8.0f, snowmanMoveRadius*sin(snowmanTheta));
-	//XMStoreFloat4x4(&mSnowmanWorld, XMMatrixMultiply(mSnowmanScale, mSnowmanOffset));
-
-	for (size_t i = 0; i < subObjs.size(); i++)
-	{
-		subObjs[i].mOffsetUpdate(dt);
-	}
 }
-
 
 void SnowmanApp::DrawScene()
 {
@@ -238,8 +160,7 @@ void SnowmanApp::DrawScene()
 	//
 	// Draw the hills with texture.
 	//
-	ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light3TexTech;
-
+	ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light2TexTech;
 	D3DX11_TECHNIQUE_DESC techDesc;
 	activeTech->GetDesc(&techDesc);
 	for (UINT p = 0; p < techDesc.Passes; ++p)
@@ -249,10 +170,10 @@ void SnowmanApp::DrawScene()
 
 		for (size_t i = 0; i < subObjs.size(); i++)
 		{
-			//XMMATRIX world = XMMatrixMultiply(subObjs[i].mScale,subObjs[i].mOffset);
 			XMMATRIX world = subObjs[i].mScale * subObjs[i].mOffset;
+			//world = XMMatrixIdentity();
 			XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
-			XMMATRIX worldViewProj = world * view*proj;
+			XMMATRIX worldViewProj = world*view*proj;
 
 			Effects::BasicFX->SetWorld(world);
 			Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
@@ -263,6 +184,25 @@ void SnowmanApp::DrawScene()
 
 			activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
 			md3dImmediateContext->DrawIndexed(subObjs[i].indexCount, subObjs[i].indexOffset, subObjs[i].vertexOffset);
+			md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
+
+			/*XMMATRIX world = XMMatrixIdentity();
+			XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
+			XMMATRIX worldViewProj = world * view*proj;
+
+			Effects::BasicFX->SetWorld(world);
+			Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
+			Effects::BasicFX->SetWorldViewProj(worldViewProj);
+			Effects::BasicFX->SetTexTransform(XMMatrixIdentity());
+			Material mTemp;
+			mTemp.Ambient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+			mTemp.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+			mTemp.Specular = XMFLOAT4(0.6f, 0.6f, 0.6f, 16.0f);
+			Effects::BasicFX->SetMaterial(mTemp);
+			Effects::BasicFX->SetDiffuseMap(mCrateMapSRV);
+
+			activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+			md3dImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);*/
 		}
 	}
 
@@ -334,6 +274,173 @@ XMFLOAT3 SnowmanApp::GetHillNormal(float x, float z)const
 
 	return n;
 }
+
+//void SnowmanApp::BuildLandGeometryBuffers()
+//{
+//	GeometryGenerator::MeshData grid;
+//
+//	GeometryGenerator geoGen;
+//
+//	geoGen.CreateGrid(160.0f, 160.0f, 50, 50, grid);
+//	//geoGen.CreateGrid(1600.0f, 1600.0f, 500, 500, grid);
+//
+//	mLandIndexCount = grid.Indices.size();
+//
+//	//
+//	// Extract the vertex elements we are interested and apply the height function to
+//	// each vertex.  
+//	//
+//
+//	std::vector<Vertex::Basic32> vertices(grid.Vertices.size());
+//	for (size_t i = 0; i < grid.Vertices.size(); ++i)
+//	{
+//		XMFLOAT3 p = grid.Vertices[i].Position;
+//
+//		p.y = GetHillHeight(p.x, p.z);
+//
+//		vertices[i].Pos = p;
+//		vertices[i].Normal = GetHillNormal(p.x, p.z);
+//		vertices[i].Tex = grid.Vertices[i].TexC;
+//	}
+//
+//	D3D11_BUFFER_DESC vbd;
+//	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+//	vbd.ByteWidth = sizeof(Vertex::Basic32) * grid.Vertices.size();
+//	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+//	vbd.CPUAccessFlags = 0;
+//	vbd.MiscFlags = 0;
+//	D3D11_SUBRESOURCE_DATA vinitData;
+//	vinitData.pSysMem = &vertices[0];
+//	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mLandVB));
+//
+//	//
+//	// Pack the indices of all the meshes into one index buffer.
+//	//
+//
+//	D3D11_BUFFER_DESC ibd;
+//	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+//	ibd.ByteWidth = sizeof(UINT) * mLandIndexCount;
+//	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+//	ibd.CPUAccessFlags = 0;
+//	ibd.MiscFlags = 0;
+//	D3D11_SUBRESOURCE_DATA iinitData;
+//	iinitData.pSysMem = &grid.Indices[0];
+//	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mLandIB));
+//}
+
+
+//void SnowmanApp::BuildSnowmanGeometryBuffers()
+//{
+//	GeometryGenerator::MeshData snowman;
+//
+//	GeometryGenerator geoGen;
+//
+//	geoGen.CreateSphere(1.0f, 64, 64, snowman);
+//
+//	mSnowmanIndexCount = snowman.Indices.size();
+//
+//	//
+//	// Extract the vertex elements we are interested and apply the height function to
+//	// each vertex.  
+//	//
+//
+//	std::vector<Vertex::Basic32> vertices(snowman.Vertices.size());
+//	for (size_t i = 0; i < snowman.Vertices.size(); ++i)
+//	{
+//		XMFLOAT3 p = snowman.Vertices[i].Position;
+//
+//		vertices[i].Pos = p;
+//		vertices[i].Normal = snowman.Vertices[i].Normal;
+//		vertices[i].Tex = snowman.Vertices[i].TexC;
+//	}
+//
+//	D3D11_BUFFER_DESC vbd;
+//	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+//	vbd.ByteWidth = sizeof(Vertex::Basic32) * snowman.Vertices.size();
+//	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+//	vbd.CPUAccessFlags = 0;
+//	vbd.MiscFlags = 0;
+//	D3D11_SUBRESOURCE_DATA vinitData;
+//	vinitData.pSysMem = &vertices[0];
+//	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mSnowmanVB));
+//
+//	//
+//	// Pack the indices of all the meshes into one index buffer.
+//	//
+//
+//	D3D11_BUFFER_DESC ibd;
+//	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+//	ibd.ByteWidth = sizeof(UINT) * mSnowmanIndexCount;
+//	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+//	ibd.CPUAccessFlags = 0;
+//	ibd.MiscFlags = 0;
+//	D3D11_SUBRESOURCE_DATA iinitData;
+//	iinitData.pSysMem = &snowman.Indices[0];
+//	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mSnowmanIB));
+//}
+
+//void SnowmanApp::BuildGeometryBuffers()
+//{
+//	GeometryGenerator::MeshData box;
+//
+//	GeometryGenerator geoGen;
+//	geoGen.CreateBox(1.0f, 1.0f, 1.0f, box);
+//
+//	// Cache the vertex offsets to each object in the concatenated vertex buffer.
+//	mBoxVertexOffset = 0;
+//
+//	// Cache the index count of each object.
+//	mBoxIndexCount = box.Indices.size();
+//
+//	// Cache the starting index for each object in the concatenated index buffer.
+//	mBoxIndexOffset = 0;
+//
+//	UINT totalVertexCount = box.Vertices.size();
+//
+//	UINT totalIndexCount = mBoxIndexCount;
+//
+//	//
+//	// Extract the vertex elements we are interested in and pack the
+//	// vertices of all the meshes into one vertex buffer.
+//	//
+//
+//	std::vector<Vertex::Basic32> vertices(totalVertexCount);
+//
+//	UINT k = 0;
+//	for (size_t i = 0; i < box.Vertices.size(); ++i, ++k)
+//	{
+//		vertices[k].Pos = box.Vertices[i].Position;
+//		vertices[k].Normal = box.Vertices[i].Normal;
+//		vertices[k].Tex = box.Vertices[i].TexC;
+//	}
+//
+//	D3D11_BUFFER_DESC vbd;
+//	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+//	vbd.ByteWidth = sizeof(Vertex::Basic32) * totalVertexCount;
+//	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+//	vbd.CPUAccessFlags = 0;
+//	vbd.MiscFlags = 0;
+//	D3D11_SUBRESOURCE_DATA vinitData;
+//	vinitData.pSysMem = &vertices[0];
+//	HR(md3dDevice->CreateBuffer(&vbd, &vinitData, &mVB));
+//
+//	//
+//	// Pack the indices of all the meshes into one index buffer.
+//	//
+//
+//	std::vector<UINT> indices;
+//	indices.insert(indices.end(), box.Indices.begin(), box.Indices.end());
+//
+//	D3D11_BUFFER_DESC ibd;
+//	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+//	ibd.ByteWidth = sizeof(UINT) * totalIndexCount;
+//	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+//	ibd.CPUAccessFlags = 0;
+//	ibd.MiscFlags = 0;
+//	D3D11_SUBRESOURCE_DATA iinitData;
+//	iinitData.pSysMem = &indices[0];
+//	HR(md3dDevice->CreateBuffer(&ibd, &iinitData, &mIB));
+//}
 
 
 void SnowmanApp::BuildGeometryBuffers()
@@ -454,21 +561,20 @@ void SnowmanApp::BindSourceToSubObjs()
 	//1-box
 	//2-snowman body,3-snowman head,4-snowman left hand,5-snowman right hand,6-snowman left arm,7-snowman right arm,8-snowman scarf ---- static 
 	//9-snowman body,10-snowman head,11-snowman left hand,12-snowman right hand,13-snowman left arm,14-snowman right arm,15-snowman scarf ---- moving
-	float temp = 0.0f;
 	for (size_t i = 0; i < subObjs.size(); i++) {
 		switch (i) {
-		case 0: //0-terrian
-			subObjs[i].setTexture(mGrassMapSRV, XMMatrixScaling(5.0f, 5.0f, 5.0f));
-			subObjs[i].setMaterial(ObjsData::mGridMat);
-			subObjs[i].setBufferOffsetAndCount(
-				mGridVertexOffset,
-				mGridIndexOffset,
-				mGridIndexCount);
-			subObjs[i].setScaleAndOffset(
-				XMMatrixScaling(1.0f, 1.0f, 1.0f),
-				0.0f, 0.0f, 0.0f);
-			break;
-		case 1: //1-box
+		//case 1: //0-terrian
+		//	subObjs[i].setTexture(mGrassMapSRV, XMMatrixScaling(5.0f, 5.0f, 5.0f));
+		//	subObjs[i].setMaterial(ObjsData::mGridMat);
+		//	subObjs[i].setBufferOffsetAndCount(
+		//		mGridVertexOffset,
+		//		mGridIndexOffset,
+		//		mGridIndexCount);
+		//	subObjs[i].setScaleAndOffset(
+		//		XMMatrixScaling(1.0f, 1.0f, 1.0f),
+		//		XMMatrixTranslation(0.0f, 0.0f, 0.0f));
+		//	break;
+		case 0: //1-box
 			subObjs[i].setTexture(mCrateMapSRV, XMMatrixScaling(1.0f, 1.0f, 1.0f));
 			subObjs[i].setMaterial(ObjsData::mOtherMat);
 			subObjs[i].setBufferOffsetAndCount(
@@ -476,58 +582,55 @@ void SnowmanApp::BindSourceToSubObjs()
 				mBoxIndexOffset,
 				mBoxIndexCount);
 			subObjs[i].setScaleAndOffset(
-				XMMatrixScaling(ObjsData::boxLength, ObjsData::boxLength, ObjsData::boxLength),
-				ObjsData::moveRadius, ObjsData::boxLength / 2, 0.0f);
-			temp = sqrt(ObjsData::moveRadius * ObjsData::moveRadius + 0.0f*0.0f);
-			subObjs[i].setMovingState(temp, ObjsData::moveSpeed);
+				XMMatrixScaling(1.0f, 1.0f, 1.0f),
+				XMMatrixTranslation(0.0f, 0.0f, 0.0f));
+			subObjs[i].setMovingState(ObjsData::moveRadius, ObjsData::moveSpeed);
 			break;
-		case 2: //snowman body static
-			subObjs[i].setTexture(mSnowmanBodyMapSRV, XMMatrixScaling(1.0f, 1.0f, 0.0f));
-			subObjs[i].setMaterial(ObjsData::mOtherMat);
-			subObjs[i].setBufferOffsetAndCount(
-				mSphereVertexOffset,
-				mSphereIndexOffset,
-				mSphereIndexCount);
-			subObjs[i].setScaleAndOffset(
-				XMMatrixScaling(ObjsData::snowmanBodyRadius, ObjsData::snowmanBodyRadius, ObjsData::snowmanBodyRadius),
-				0.0f, ObjsData::snowmanBodyRadius, 0.0f);
-			break;
-		case 3: //snowman head static
-			subObjs[i].setTexture(mSnowmanHeadMapSRV, XMMatrixScaling(1.0f, 1.0f, 0.0f));
-			subObjs[i].setMaterial(ObjsData::mOtherMat);
-			subObjs[i].setBufferOffsetAndCount(
-				mSphereVertexOffset,
-				mSphereIndexOffset,
-				mSphereIndexCount);
-			subObjs[i].setScaleAndOffset(
-				XMMatrixScaling(ObjsData::snowmanHeadRadius, ObjsData::snowmanHeadRadius, ObjsData::snowmanHeadRadius),
-				0.0f, ObjsData::snowmanBodyRadius * 2 + ObjsData::snowmanHeadRadius - 0.5f, 0.0f);
-			break;
-		case 4: //snowman body moving
-			subObjs[i].setTexture(mSnowmanBodyMapSRV, XMMatrixScaling(1.0f, 1.0f, 0.0f));
-			subObjs[i].setMaterial(ObjsData::mOtherMat);
-			subObjs[i].setBufferOffsetAndCount(
-				mSphereVertexOffset,
-				mSphereIndexOffset,
-				mSphereIndexCount);
-			subObjs[i].setScaleAndOffset(
-				XMMatrixScaling(ObjsData::snowmanBodyRadius, ObjsData::snowmanBodyRadius, ObjsData::snowmanBodyRadius),
-				ObjsData::moveRadius, ObjsData::snowmanBodyRadius + ObjsData::boxLength, 0.0f);
-			temp = sqrt(ObjsData::moveRadius * ObjsData::moveRadius + 0.0f*0.0f);
-			subObjs[i].setMovingState(temp, ObjsData::moveSpeed);
-			break;
-		case 5: //snowman head moving
-			subObjs[i].setTexture(mSnowmanHeadMapSRV, XMMatrixScaling(1.0f, 1.0f, 0.0f));
-			subObjs[i].setMaterial(ObjsData::mOtherMat);
-			subObjs[i].setBufferOffsetAndCount(
-				mSphereVertexOffset,
-				mSphereIndexOffset,
-				mSphereIndexCount);
-			subObjs[i].setScaleAndOffset(
-				XMMatrixScaling(ObjsData::snowmanHeadRadius, ObjsData::snowmanHeadRadius, ObjsData::snowmanHeadRadius),
-				ObjsData::moveRadius, ObjsData::snowmanHeadRadius + ObjsData::boxLength + ObjsData::snowmanBodyRadius * 2 -0.5f, 0.0f);
-			temp = sqrt(ObjsData::moveRadius * ObjsData::moveRadius + 0.0f*0.0f);
-			subObjs[i].setMovingState(temp, ObjsData::moveSpeed);
+		//case 2: //snowman body static
+		//	subObjs[i].setTexture(mSnowmanBodyMapSRV, XMMatrixScaling(1.0f, 1.0f, 0.0f));
+		//	subObjs[i].setMaterial(ObjsData::mOtherMat);
+		//	subObjs[i].setBufferOffsetAndCount(
+		//		mSphereVertexOffset,
+		//		mSphereIndexOffset,
+		//		mSphereIndexCount);
+		//	subObjs[i].setScaleAndOffset(
+		//		XMMatrixScaling(ObjsData::snowmanBodyRadius, ObjsData::snowmanBodyRadius, ObjsData::snowmanBodyRadius),
+		//		XMMatrixTranslation(0.0f, ObjsData::snowmanBodyRadius, 0.0f));
+		//	break;
+		//case 3: //snowman head static
+		//	subObjs[i].setTexture(mSnowmanHeadMapSRV, XMMatrixScaling(1.0f, 1.0f, 0.0f));
+		//	subObjs[i].setMaterial(ObjsData::mOtherMat);
+		//	subObjs[i].setBufferOffsetAndCount(
+		//		mSphereVertexOffset,
+		//		mSphereIndexOffset,
+		//		mSphereIndexCount);
+		//	subObjs[i].setScaleAndOffset(
+		//		XMMatrixScaling(ObjsData::snowmanHeadRadius, ObjsData::snowmanHeadRadius, ObjsData::snowmanHeadRadius),
+		//		XMMatrixTranslation(0.0f, ObjsData::snowmanBodyRadius * 2 + ObjsData::snowmanHeadRadius - 0.5f, 0.0f));
+		//	break;
+		//case 4: //snowman body moving
+		//	subObjs[i].setTexture(mSnowmanBodyMapSRV, XMMatrixScaling(1.0f, 1.0f, 0.0f));
+		//	subObjs[i].setMaterial(ObjsData::mOtherMat);
+		//	subObjs[i].setBufferOffsetAndCount(
+		//		mSphereVertexOffset,
+		//		mSphereIndexOffset,
+		//		mSphereIndexCount);
+		//	subObjs[i].setScaleAndOffset(
+		//		XMMatrixScaling(ObjsData::snowmanBodyRadius, ObjsData::snowmanBodyRadius, ObjsData::snowmanBodyRadius),
+		//		XMMatrixTranslation(ObjsData::moveRadius, ObjsData::snowmanBodyRadius + ObjsData::boxLength, 0.0f));
+		//	subObjs[i].setMovingState(ObjsData::moveRadius, ObjsData::moveSpeed);
+		//	break;
+		//case 5: //snowman head moving
+		//	subObjs[i].setTexture(mSnowmanBodyMapSRV, XMMatrixScaling(1.0f, 1.0f, 0.0f));
+		//	subObjs[i].setMaterial(ObjsData::mOtherMat);
+		//	subObjs[i].setBufferOffsetAndCount(
+		//		mSphereVertexOffset,
+		//		mSphereIndexOffset,
+		//		mSphereIndexCount);
+		//	subObjs[i].setScaleAndOffset(
+		//		XMMatrixScaling(ObjsData::snowmanHeadRadius, ObjsData::snowmanHeadRadius, ObjsData::snowmanHeadRadius),
+		//		XMMatrixTranslation(ObjsData::moveRadius, ObjsData::snowmanHeadRadius + ObjsData::boxLength + ObjsData::snowmanBodyRadius * 2 -0.5f, 0.0f));
+		//	subObjs[i].setMovingState(ObjsData::moveRadius, ObjsData::moveSpeed);
 		default:
 			break;
 		}
