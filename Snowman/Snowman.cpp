@@ -38,14 +38,8 @@ SnowmanApp::SnowmanApp(HINSTANCE hInstance)
 
 	mLastMousePos.x = 0;
 	mLastMousePos.y = 0;
-
-	/*XMMATRIX mSnowmanScale = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	snowmanMoveRadius = 30.0f;
-	snowmanTheta = 0.0f;
-	XMMATRIX mSnowmanOffset = XMMatrixTranslation(snowmanMoveRadius*cos(snowmanTheta), 8.0f, snowmanMoveRadius*sin(snowmanTheta));
-	XMStoreFloat4x4(&mSnowmanWorld, XMMatrixMultiply(mSnowmanScale, mSnowmanOffset));*/
-
-
+	
+	//set lights
 	mDirLights[0].Ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
 	mDirLights[0].Diffuse = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	mDirLights[0].Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
@@ -61,6 +55,7 @@ SnowmanApp::SnowmanApp(HINSTANCE hInstance)
 	mDirLights[2].Specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	mDirLights[2].Direction = XMFLOAT3(0.0f, -0.707f, -0.707f);
 
+	//specify the number of subobjects
 	subObjsCount = 6;
 	std::vector<SubObject> subs(subObjsCount);
 	subObjs = subs;
@@ -114,6 +109,8 @@ bool SnowmanApp::Init()
 	//HR(DirectX::CreateDDSTextureFromFile(md3dDevice,
 	//	L"Textures/snowman_scarf.dds", &texResource, &mSnowmanScarfMapSRV));
 
+	mCam.SetPosition(0.0f, 2.0f, -15.0f);
+
 	BuildGeometryBuffers();
 	BindSourceToSubObjs();
 
@@ -128,93 +125,103 @@ void SnowmanApp::OnResize()
 	XMStoreFloat4x4(&mProj, P);
 }
 
+//void SnowmanApp::UpdateScene(float dt)
+//{
+//	// Convert Spherical to Cartesian coordinates.
+//	float x = mRadius * sinf(mPhi)*cosf(mTheta);
+//	float z = mRadius * sinf(mPhi)*sinf(mTheta);
+//	float y = mRadius * cosf(mPhi);
+//
+//	mEyePosW = XMFLOAT3(x, y, z);
+//
+//	// Build the view matrix.
+//	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
+//	XMVECTOR target = XMVectorZero();
+//	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+//
+//	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
+//	XMStoreFloat4x4(&mView, V);
+//
+//	// Update offset matrix of subojects.
+//	for (size_t i = 0; i < subObjs.size(); i++)
+//	{
+//		subObjs[i].mOffsetUpdate(dt);
+//	}
+//}
+
 void SnowmanApp::UpdateScene(float dt)
 {
-	// Convert Spherical to Cartesian coordinates.
-	float x = mRadius * sinf(mPhi)*cosf(mTheta);
-	float z = mRadius * sinf(mPhi)*sinf(mTheta);
-	float y = mRadius * cosf(mPhi);
-
-	mEyePosW = XMFLOAT3(x, y, z);
-
-	// Build the view matrix.
-	XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	XMMATRIX V = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, V);
-
 	//
-	// Every quarter second, generate a random wave.
+	// Control the camera.
 	//
-	//static float t_base = 0.0f;
-	//if( (mTimer.TotalTime() - t_base) >= 0.25f )
-	//{
-	//	t_base += 0.25f;
- //
-	//	DWORD i = 5 + rand() % (mWaves.RowCount()-10);
-	//	DWORD j = 5 + rand() % (mWaves.ColumnCount()-10);
+	if (GetAsyncKeyState('W') & 0x8000)
+		mCam.Walk(10.0f*dt);
 
-	//	float r = MathHelper::RandF(1.0f, 2.0f);
+	if (GetAsyncKeyState('S') & 0x8000)
+		mCam.Walk(-10.0f*dt);
 
-	//	mWaves.Disturb(i, j, r);
-	//}
+	if (GetAsyncKeyState('A') & 0x8000)
+		mCam.Strafe(-10.0f*dt);
 
-	//mWaves.Update(dt);
+	if (GetAsyncKeyState('D') & 0x8000)
+		mCam.Strafe(10.0f*dt);
 
-	//
-	// Update the wave vertex buffer with the new solution.
-	//
-
-	//D3D11_MAPPED_SUBRESOURCE mappedData;
-	//HR(md3dImmediateContext->Map(mWavesVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData));
-
-	//Vertex::Basic32* v = reinterpret_cast<Vertex::Basic32*>(mappedData.pData);
-	//for(UINT i = 0; i < mWaves.VertexCount(); ++i)
-	//{
-	//	v[i].Pos    = mWaves[i];
-	//	v[i].Normal = mWaves.Normal(i);
-
-	//	// Derive tex-coords in [0,1] from position.
-	//	v[i].Tex.x  = 0.5f + mWaves[i].x / mWaves.Width();
-	//	v[i].Tex.y  = 0.5f - mWaves[i].z / mWaves.Depth();
-	//}
-
-	//md3dImmediateContext->Unmap(mWavesVB, 0);
-
-	//
-	// Animate water texture coordinates.
-	//
-
-	//// Tile water texture.
-	//XMMATRIX wavesScale = XMMatrixScaling(5.0f, 5.0f, 0.0f);
-
-	//// Translate texture over time.
-	//mWaterTexOffset.y += 0.05f*dt;
-	//mWaterTexOffset.x += 0.1f*dt;	
-	//XMMATRIX wavesOffset = XMMatrixTranslation(mWaterTexOffset.x, mWaterTexOffset.y, 0.0f);
-
-	//// Combine scale and translation.
-	//XMStoreFloat4x4(&mWaterTexTransform, wavesScale*wavesOffset);
-
-	//Update the world matrix of snowman
-	//XMMATRIX mSnowmanScale = XMMatrixScaling(5.0f, 5.0f, 5.0f);
-	//snowmanMoveRadius = 30.0f;
-	//snowmanTheta += 2.0f*dt;
-	//if (snowmanTheta > 2 * MathHelper::Pi)
-	//{
-	//	snowmanTheta -= 2 * MathHelper::Pi;
-	//}
-	//XMMATRIX mSnowmanOffset = XMMatrixTranslation(snowmanMoveRadius*cos(snowmanTheta), 8.0f, snowmanMoveRadius*sin(snowmanTheta));
-	//XMStoreFloat4x4(&mSnowmanWorld, XMMatrixMultiply(mSnowmanScale, mSnowmanOffset));
-
+	// Update offset matrix of subojects.
 	for (size_t i = 0; i < subObjs.size(); i++)
 	{
 		subObjs[i].mOffsetUpdate(dt);
 	}
 }
 
+
+//void SnowmanApp::DrawScene()
+//{
+//	md3dImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&Colors::LightSteelBlue));
+//	md3dImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+//
+//	md3dImmediateContext->IASetInputLayout(InputLayouts::Basic32);
+//	md3dImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+//
+//	UINT stride = sizeof(Vertex::Basic32);
+//	UINT offset = 0;
+//
+//	XMMATRIX view = XMLoadFloat4x4(&mView);
+//	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+//	XMMATRIX viewProj = view * proj;
+//
+//	// Set per frame constants.
+//	Effects::BasicFX->SetDirLights(mDirLights);
+//	Effects::BasicFX->SetEyePosW(mEyePosW);
+//
+//	ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light3TexTech;
+//
+//	D3DX11_TECHNIQUE_DESC techDesc;
+//	activeTech->GetDesc(&techDesc);
+//	for (UINT p = 0; p < techDesc.Passes; ++p)
+//	{
+//		md3dImmediateContext->IASetVertexBuffers(0, 1, &mVB, &stride, &offset);
+//		md3dImmediateContext->IASetIndexBuffer(mIB, DXGI_FORMAT_R32_UINT, 0);
+//
+//		for (size_t i = 0; i < subObjs.size(); i++)
+//		{
+//			XMMATRIX world = subObjs[i].mScale * subObjs[i].mOffset;
+//			XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
+//			XMMATRIX worldViewProj = world * view*proj;
+//
+//			Effects::BasicFX->SetWorld(world);
+//			Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
+//			Effects::BasicFX->SetWorldViewProj(worldViewProj);
+//			Effects::BasicFX->SetTexTransform(subObjs[i].mTexTransform);
+//			Effects::BasicFX->SetMaterial(subObjs[i].mMat);
+//			Effects::BasicFX->SetDiffuseMap(subObjs[i].mTexMapSRV);
+//
+//			activeTech->GetPassByIndex(p)->Apply(0, md3dImmediateContext);
+//			md3dImmediateContext->DrawIndexed(subObjs[i].indexCount, subObjs[i].indexOffset, subObjs[i].vertexOffset);
+//		}
+//	}
+//
+//	HR(mSwapChain->Present(0, 0));
+//}
 
 void SnowmanApp::DrawScene()
 {
@@ -227,17 +234,16 @@ void SnowmanApp::DrawScene()
 	UINT stride = sizeof(Vertex::Basic32);
 	UINT offset = 0;
 
-	XMMATRIX view = XMLoadFloat4x4(&mView);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	XMMATRIX viewProj = view * proj;
+	mCam.UpdateViewMatrix();
+
+	XMMATRIX view = mCam.View();
+	XMMATRIX proj = mCam.Proj();
+	XMMATRIX viewProj = mCam.ViewProj();
 
 	// Set per frame constants.
 	Effects::BasicFX->SetDirLights(mDirLights);
-	Effects::BasicFX->SetEyePosW(mEyePosW);
+	Effects::BasicFX->SetEyePosW(mCam.GetPosition());
 
-	//
-	// Draw the hills with texture.
-	//
 	ID3DX11EffectTechnique* activeTech = Effects::BasicFX->Light3TexTech;
 
 	D3DX11_TECHNIQUE_DESC techDesc;
@@ -249,7 +255,6 @@ void SnowmanApp::DrawScene()
 
 		for (size_t i = 0; i < subObjs.size(); i++)
 		{
-			//XMMATRIX world = XMMatrixMultiply(subObjs[i].mScale,subObjs[i].mOffset);
 			XMMATRIX world = subObjs[i].mScale * subObjs[i].mOffset;
 			XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
 			XMMATRIX worldViewProj = world * view*proj;

@@ -6,6 +6,7 @@
 #include "Effects.h"
 #include "Vertex.h"
 #include "Objects.h"
+#include "camera.h"
 
 class SnowmanApp : public D3DApp
 {
@@ -89,4 +90,5 @@ private:
 	float mRadius;
 
 	POINT mLastMousePos;
+	Camera mCam;
 };

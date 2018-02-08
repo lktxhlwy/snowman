@@ -53,7 +53,7 @@ void SubObject::setMovingState(float radius,float speed)
 	moveSpeed = speed;
 }
 
-inline float arctan(float x, float z)
+static inline float arctan(float x, float z)
 {
 	if (x > 0) {
 		return atan(z / x);
