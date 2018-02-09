@@ -41,6 +41,7 @@ public:
 	virtual void Init() = 0;
 	virtual void Draw(ID3D11DeviceContext* dc, ID3DX11EffectTechnique* activeTech, CXMMATRIX mWorld, const Camera& camera);
 	virtual void GenerateModel() = 0;
+	virtual bool IsInModel(XMFLOAT3 pos);
 
 protected:
 	virtual void AssembleSubModel(std::vector<Vertex::Basic32> &vertices, std::vector<UINT> &indices, GeometryGenerator::MeshData &geo, CXMMATRIX mTrans, SubModel& sub);
@@ -97,7 +98,7 @@ public:
 	void operator delete(void* p);
 
 	void Init();
-	//void Draw(ID3D11DeviceContext* dc, ID3DX11EffectTechnique* activeTech, CXMMATRIX mWorld, const Camera& camera);
+	bool IsInModel(XMFLOAT3 pos);
 
 private:
 	BoxModel(const BoxModel& rhs);

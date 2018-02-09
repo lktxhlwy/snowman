@@ -56,5 +56,13 @@ private:
 	ModelInstance snowman;
 	ModelInstance snowmanStatic;
 	ModelInstance box;
-	ModelInstance terrain;
+	TarrainInstance terrain;
+
+	UINT camMode;
+};
+
+enum CAM_MODE {
+	CAM_MODE_NORMAL,
+	CAM_MODE_IN_BOX,
+	CAM_MODE_FREE
 };

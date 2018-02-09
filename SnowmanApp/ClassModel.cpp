@@ -32,6 +32,11 @@ Model::~Model()
 	ReleaseCOM(mIB);
 }
 
+bool Model::IsInModel(XMFLOAT3 pos)
+{
+	return false;
+}
+
 void Model::Draw(ID3D11DeviceContext* dc, ID3DX11EffectTechnique* activeTech, CXMMATRIX mWorld, const Camera& camera)
 {
 	XMMATRIX view = camera.View();
@@ -215,21 +220,21 @@ void SnowmanModel::GenerateModel()
 	vbd.Usage = D3D11_USAGE_IMMUTABLE;
 	vbd.ByteWidth = sizeof(Vertex::Basic32) * vertices.size();
 	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vbd.CPUAccessFlags = 0;
-	vbd.MiscFlags = 0;
-	D3D11_SUBRESOURCE_DATA vinitData;
-	vinitData.pSysMem = &vertices[0];
-	HR(device->CreateBuffer(&vbd, &vinitData, &mVB));
+vbd.CPUAccessFlags = 0;
+vbd.MiscFlags = 0;
+D3D11_SUBRESOURCE_DATA vinitData;
+vinitData.pSysMem = &vertices[0];
+HR(device->CreateBuffer(&vbd, &vinitData, &mVB));
 
-	D3D11_BUFFER_DESC ibd;
-	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(UINT) * indices.size();
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.CPUAccessFlags = 0;
-	ibd.MiscFlags = 0;
-	D3D11_SUBRESOURCE_DATA iinitData;
-	iinitData.pSysMem = &indices[0];
-	HR(device->CreateBuffer(&ibd, &iinitData, &mIB));
+D3D11_BUFFER_DESC ibd;
+ibd.Usage = D3D11_USAGE_IMMUTABLE;
+ibd.ByteWidth = sizeof(UINT) * indices.size();
+ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+ibd.CPUAccessFlags = 0;
+ibd.MiscFlags = 0;
+D3D11_SUBRESOURCE_DATA iinitData;
+iinitData.pSysMem = &indices[0];
+HR(device->CreateBuffer(&ibd, &iinitData, &mIB));
 }
 
 
@@ -272,10 +277,9 @@ void BoxModel::Init()
 	GenerateModel();
 }
 
-
 void BoxModel::GenerateModel()
 {
-	GeometryGenerator::MeshData box;	
+	GeometryGenerator::MeshData box;
 	GeometryGenerator geoGen;
 	geoGen.CreateBox(1.0f, 1.0f, 1.0f, box);
 
@@ -308,5 +312,19 @@ void BoxModel::GenerateModel()
 	D3D11_SUBRESOURCE_DATA iinitData;
 	iinitData.pSysMem = &indices[0];
 	HR(device->CreateBuffer(&ibd, &iinitData, &mIB));
+}
+
+bool BoxModel::IsInModel(XMFLOAT3 pos)
+{
+	if ((abs(pos.x) <= boxLength / 2) &&
+		(abs(pos.y) <= boxLength / 2) &&
+		(abs(pos.z) <= boxLength / 2))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 

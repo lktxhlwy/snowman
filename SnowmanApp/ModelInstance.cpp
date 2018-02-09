@@ -22,6 +22,16 @@ void ModelInstance::SetPostion(XMFLOAT3 postion)
 	posW = postion;
 }
 
+XMFLOAT3 ModelInstance::GetPostion()
+{
+	return posW;
+}
+
+XMFLOAT3 ModelInstance::GetRotationCenter()
+{
+	return rotationCenter;
+}
+
 void ModelInstance::SetAnimationState(XMFLOAT3 posCenter, float radius, float speed)
 {
 	isStatic = false;
@@ -65,3 +75,27 @@ void ModelInstance::Draw(ID3D11DeviceContext* dc, ID3DX11EffectTechnique* active
 	XMMATRIX mWorld = XMMatrixTranslation(posW.x,posW.y,posW.z);
 	pModel->Draw(dc, activeTech, mWorld, camera);
 }
+
+bool ModelInstance::IsInInstance(XMFLOAT3 pos)
+{
+	//把该点的坐标从世界坐标系转化到模型的本地坐标系
+	XMMATRIX mWorld = XMMatrixTranslation(posW.x, posW.y, posW.z);
+	XMMATRIX mWorldInverse = XMMatrixInverse(nullptr, mWorld);
+	XMStoreFloat3(&pos, XMVector3Transform(XMLoadFloat3(&pos), mWorldInverse));
+	return pModel->IsInModel(pos);
+}
+
+
+//class TarrainInstance
+float TarrainInstance::GetHeight(XMFLOAT3 pos)
+{
+	return pTerrainModel->GetHeight(pos);
+}
+
+void TarrainInstance::BindModels(TerrainModel * p)
+{
+	pTerrainModel = p;
+	pModel = p;
+}
+
+
