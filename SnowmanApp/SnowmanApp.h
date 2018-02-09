@@ -6,9 +6,10 @@
 #include "camera.h"
 #include "Effects.h"
 #include "Vertex.h"
-#include "Objects.h"
 #include "ModelInstance.h"
 #include "Sky.h"
+#include "Models.h"
+#include "RenderStates.h"
 
 class SnowmanApp : public D3DApp
 {
@@ -54,4 +55,6 @@ private:
 
 	ModelInstance snowman;
 	ModelInstance snowmanStatic;
+	ModelInstance box;
+	ModelInstance terrain;
 };

@@ -38,4 +38,10 @@ ID3D11ShaderResourceView* TextureMgr::CreateTexture(std::wstring filename)
 
 	return srv;
 }
+
+ID3D11ShaderResourceView * TextureMgr::operator[](std::wstring filename)
+{
+	return mTextureSRV[filename];
+}
+
  

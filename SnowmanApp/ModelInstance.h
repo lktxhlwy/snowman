@@ -1,7 +1,7 @@
 #ifndef MODELINSTANCE_H
 #define MODELINSTANCE_H
 
-#include "Models.h"
+#include "ClassModel.h"
 class ModelInstance
 {
 public:

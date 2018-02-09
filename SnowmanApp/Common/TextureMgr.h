@@ -17,10 +17,12 @@ public:
 	void Init(ID3D11Device* device);
 
 	ID3D11ShaderResourceView* CreateTexture(std::wstring filename);
+	ID3D11ShaderResourceView* operator[](std::wstring filename);
 
 private:
 	TextureMgr(const TextureMgr& rhs);
 	TextureMgr& operator=(const TextureMgr& rhs);
+
 	
 private:
 	ID3D11Device* md3dDevice;
